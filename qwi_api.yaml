@@ -1,0 +1,101 @@
+swagger: "2.0"
+info:
+  title: Qwi API
+  version: "1.0"
+  description: "This is a sample server server server."
+  contact:
+    email: "qwi.development@gmail.com"
+host: "api.server.test"
+schemes:
+  - "https"
+paths:
+  /registerVerificationID:
+    post:
+      summary: "VerificationIDを生成する"
+      parameters:
+        - name: "organizationID" #パラメータ名
+          in: "formData" #path, formData, query, headerのいずれか
+          required: true
+          type: "string" #データ型
+          description: "organizationID"
+        - name: "email" #パラメータ名
+          in: "formData" #path, formData, query, headerのいずれか
+          required: true
+          type: "string" #データ型
+          description: "verificationID生成対象アカウントのemailアドレス"
+        - name: "otp"
+          in: "formData"
+          type: "integer"
+          description: "アプリに表示されたワンタイムパスワード"
+          required: true
+        - name: "apiKey"
+          in: "header"
+          type: "string"
+          required: true
+      produces:
+        - "application/json"
+      responses:
+        "200":
+          description: "処理が正常終了"
+          schema:
+            type: "object"
+            properties:
+              verificationID:
+                description: "成功時のみ値を返す。"
+                type: "string"
+                #example: "xxxxxxxxxxxxxxxxxx"
+              status:
+                description: "処理成功時はtrue、失敗時はfalseを返す。"
+                type: "boolean"
+            #: #oneOfを置くと、同じステータスコード内に複数レスポンスが定義できる
+            #$ref: "#/definitions/VerificationID"
+        "400":
+          description: "失敗"
+          schema:
+            type: "object"
+            properties:
+              status:
+                description: "falseを返す"
+                type: "boolean"
+                example: "false"
+      security:
+        - api_key: []
+
+  /getVerificationStatus:
+    get:
+      parameters:
+        - name: "organizationID" #パラメータ名
+          in: "formData" #path, formData, query, headerのいずれか
+          required: true
+          type: "string" #データ型
+          description: "organizationID"
+        - name: "apiKey"
+          in: "header"
+          type: "string"
+          required: true
+        - name: "verificationID"
+          in: "formData"
+          type: "string"
+          required: true
+      produces:
+        - "application/json"
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: "object"
+            properties:
+              status:
+                description: "verificationIDを持つ人が学生ならtrue、そうでないならfalseを返す。"
+                type: "boolean"
+#definitions:
+#  Successful:
+#    type: "object"
+#    properties:
+#      verificationID:
+#        description: "成功時のみ値を返す。"
+#        type: "string"
+#        example: "xxxxxxxxxxxxxxxxxx"
+#      status:
+#        description: "成功時はtrue、失敗時はfalseを返す。"
+#        type: "boolean"
